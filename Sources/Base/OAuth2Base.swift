@@ -242,7 +242,7 @@ public class OAuth2Base {
 				callback(data: data, status: http.statusCode, error: nil)
 			}
 			else {
-				let error = OAuth2Error.generic("Unknown response \(sessResponse) with data “\(NSString(data: sessData!, encoding: String.Encoding.utf8))”")
+				let error = OAuth2Error.generic("Unknown response \(sessResponse) with data “\(NSString(data: sessData!, encoding: String.Encoding.utf8.rawValue))”")
 				callback(data: nil, status: nil, error: error)
 			}
 		}
