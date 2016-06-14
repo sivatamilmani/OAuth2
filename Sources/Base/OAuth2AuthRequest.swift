@@ -97,7 +97,7 @@ public class OAuth2AuthRequest {
 	*/
 	func asURLComponents() throws -> URLComponents {
 		let comp = URLComponents(url: url, resolvingAgainstBaseURL: false)
-		guard let components = comp where "https" == components.scheme else {
+		guard var components = comp where "https" == components.scheme else {
 			throw OAuth2Error.notUsingTLS
 		}
 		if .GET == method && params.count > 0 {

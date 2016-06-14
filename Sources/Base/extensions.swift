@@ -45,7 +45,7 @@ extension String {
 	/// Decodes a percent-encoded string and converts the plus sign into a space.
 	var wwwFormURLDecodedString: String {
 		let rep = replacingOccurrences(of: "+", with: " ")
-		return rep.stringByRemovingPercentEncoding ?? rep
+		return rep.removingPercentEncoding ?? rep
 	}
 }
 
@@ -76,7 +76,7 @@ extension NSMutableCharacterSet {
 extension URLRequest {
 	
 	/** A string describing the request, including headers and body. */
-	override public var debugDescription: String {
+    public var debugDescription: String {
 		var msg = "HTTP/1.1 \(httpMethod ?? "METHOD") \(url?.description ?? "/")"
 		allHTTPHeaderFields?.forEach() { msg += "\n\($0): \($1)" }
 		if let data = httpBody, let body = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {

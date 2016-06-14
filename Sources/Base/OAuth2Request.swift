@@ -70,7 +70,7 @@ public class OAuth2DebugURLSessionDelegate: NSObject, URLSessionDelegate
 		completionHandler: (Foundation.URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
 		if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
 			if challenge.protectionSpace.host == host {
-				let credential = URLCredential(forTrust: challenge.protectionSpace.serverTrust!)
+				let credential = URLCredential(trust: challenge.protectionSpace.serverTrust!)
 				completionHandler(.useCredential, credential)
 				return
 			}
