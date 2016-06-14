@@ -94,7 +94,7 @@ public class OAuth2CodeGrant: OAuth2 {
 			let post = try tokenRequestWithCode(code).asURLRequestFor(self)
 			logger?.debug("OAuth2", msg: "Exchanging code \(code) for access token at \(post.url!)")
 			
-			performRequest(post as URLRequest) { data, status, error in
+			performRequest(post) { data, status, error in
 				do {
 					guard let data = data else {
 						throw error ?? OAuth2Error.noDataInResponse

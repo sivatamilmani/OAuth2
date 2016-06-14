@@ -167,11 +167,11 @@ public class OAuth2WebViewController: UIViewController, UIWebViewDelegate
 		dismiss(asCancel: true, animated: nil != sender ? true : false)
 	}
 	
-	func dismiss(_ animated: Bool) {
+	func dismiss(animated: Bool) {
 		dismiss(asCancel: false, animated: animated)
 	}
 	
-	func dismiss(_ asCancel: Bool, animated: Bool) {
+	func dismiss(asCancel: Bool, animated: Bool) {
 		webView?.stopLoading()
 		
 		if nil != self.onWillDismiss {

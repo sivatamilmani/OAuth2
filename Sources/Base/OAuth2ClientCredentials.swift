@@ -51,7 +51,7 @@ public class OAuth2ClientCredentials: OAuth2 {
 			let post = try tokenRequest(params).asURLRequestFor(self)
 			logger?.debug("OAuth2", msg: "Requesting new access token from \(post.url?.description ?? "nil")")
 			
-			performRequest(post as URLRequest) { data, status, error in
+			performRequest(post) { data, status, error in
 				do {
 					guard let data = data else {
 						throw error ?? OAuth2Error.noDataInResponse

@@ -29,7 +29,7 @@ public class OAuth2Request: NSMutableURLRequest
 	/**
 	    Convenience initalizer to instantiate and sign a mutable URL request in one go.
 	 */
-	convenience init(URL: Foundation.URL!, oauth: OAuth2, cachePolicy: URLRequest.CachePolicy, timeoutInterval: TimeInterval) {
+	convenience init(URL: Foundation.URL!, oauth: OAuth2, cachePolicy: NSURLRequest.CachePolicy, timeoutInterval: TimeInterval) {
 		self.init(url: URL, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
 		self.sign(oauth)
 	}

@@ -59,7 +59,7 @@ public class OAuth2DynReg {
 		do {
 			let req = try registrationRequest(client)
 			client.logger?.debug("OAuth2", msg: "Registering client at \(req.url!) with scopes “\(client.scope ?? "(none)")”")
-			client.performRequest(req as URLRequest) { data, status, error in
+			client.performRequest(req) { data, status, error in
 				do {
 					guard let data = data else {
 						throw error ?? OAuth2Error.noDataInResponse
