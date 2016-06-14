@@ -29,8 +29,8 @@ public class OAuth2Request: NSMutableURLRequest
 	/**
 	    Convenience initalizer to instantiate and sign a mutable URL request in one go.
 	 */
-	convenience init(URL: NSURL!, oauth: OAuth2, cachePolicy: NSURLRequestCachePolicy, timeoutInterval: NSTimeInterval) {
-		self.init(URL: URL, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
+	convenience init(URL: Foundation.URL!, oauth: OAuth2, cachePolicy: NSURLRequest.CachePolicy, timeoutInterval: TimeInterval) {
+		self.init(url: URL, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval)
 		self.sign(oauth)
 	}
 	
@@ -39,7 +39,7 @@ public class OAuth2Request: NSMutableURLRequest
 	
 	    Will log an error if the OAuth2 instance does not have an access token!
 	 */
-	func sign(oauth: OAuth2) {
+	func sign(_ oauth: OAuth2) {
 		if let access = oauth.clientConfig.accessToken where !access.isEmpty {
 			self.setValue("Bearer \(access)", forHTTPHeaderField: "Authorization")
 		}
@@ -57,7 +57,7 @@ public class OAuth2Request: NSMutableURLRequest
     Still, sometimes you'll have to do this so this class is provided, but DO NOT SUBMIT your app using self-signed SSL certs to the App
     Store. You have been warned!
  */
-public class OAuth2DebugURLSessionDelegate: NSObject, NSURLSessionDelegate
+public class OAuth2DebugURLSessionDelegate: NSObject, URLSessionDelegate
 {
 	/// The host to allow a self-signed SSL certificate for.
 	let host: String
@@ -66,16 +66,16 @@ public class OAuth2DebugURLSessionDelegate: NSObject, NSURLSessionDelegate
 		self.host = host
 	}
 	
-	public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge,
-		completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
+	public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge,
+		completionHandler: (Foundation.URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
 		if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
 			if challenge.protectionSpace.host == host {
-				let credential = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust!)
-				completionHandler(.UseCredential, credential)
+				let credential = URLCredential(forTrust: challenge.protectionSpace.serverTrust!)
+				completionHandler(.useCredential, credential)
 				return
 			}
 		}
-		completionHandler(.CancelAuthenticationChallenge, nil)
+		completionHandler(.cancelAuthenticationChallenge, nil)
 	}
 }
 

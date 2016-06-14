@@ -21,12 +21,12 @@
 import Foundation
 
 
-extension NSHTTPURLResponse {
+extension HTTPURLResponse {
 	
 	/// A localized string explaining the current `statusCode`.
 	public var statusString: String {
 		get {
-			return NSHTTPURLResponse.localizedStringForStatusCode(self.statusCode)
+			return HTTPURLResponse.localizedString(forStatusCode: self.statusCode)
 		}
 	}
 }
@@ -34,17 +34,17 @@ extension NSHTTPURLResponse {
 
 extension String {
 	
-	private static var wwwFormURLPlusSpaceCharacterSet: NSCharacterSet = NSMutableCharacterSet.wwwFormURLPlusSpaceCharacterSet()
+	private static var wwwFormURLPlusSpaceCharacterSet: CharacterSet = NSMutableCharacterSet.wwwFormURLPlusSpaceCharacterSet() as CharacterSet
 	
 	/// Encodes a string to become x-www-form-urlencoded; the space is encoded as plus sign (+).
 	var wwwFormURLEncodedString: String {
 		let characterSet = String.wwwFormURLPlusSpaceCharacterSet
-		return (stringByAddingPercentEncodingWithAllowedCharacters(characterSet) ?? "").stringByReplacingOccurrencesOfString(" ", withString: "+")
+		return (addingPercentEncoding(withAllowedCharacters: characterSet) ?? "").replacingOccurrences(of: " ", with: "+")
 	}
 	
 	/// Decodes a percent-encoded string and converts the plus sign into a space.
 	var wwwFormURLDecodedString: String {
-		let rep = stringByReplacingOccurrencesOfString("+", withString: " ")
+		let rep = replacingOccurrences(of: "+", with: " ")
 		return rep.stringByRemovingPercentEncoding ?? rep
 	}
 }
@@ -66,20 +66,20 @@ extension NSMutableCharacterSet {
 	    > - Leave byte as-is
 	 */
 	class func wwwFormURLPlusSpaceCharacterSet() -> NSMutableCharacterSet {
-		let set = NSMutableCharacterSet.alphanumericCharacterSet()
-		set.addCharactersInString("-._* ")
+		let set = NSMutableCharacterSet.alphanumerics()
+		set.addCharacters(in: "-._* ")
 		return set
 	}
 }
 
 
-extension NSURLRequest {
+extension URLRequest {
 	
 	/** A string describing the request, including headers and body. */
 	override public var debugDescription: String {
-		var msg = "HTTP/1.1 \(HTTPMethod ?? "METHOD") \(URL?.description ?? "/")"
+		var msg = "HTTP/1.1 \(httpMethod ?? "METHOD") \(url?.description ?? "/")"
 		allHTTPHeaderFields?.forEach() { msg += "\n\($0): \($1)" }
-		if let data = HTTPBody, let body = NSString(data: data, encoding: NSUTF8StringEncoding) {
+		if let data = httpBody, let body = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
 			msg += "\n\n\(body)"
 		}
 		return msg
@@ -87,7 +87,7 @@ extension NSURLRequest {
 }
 
 
-extension NSHTTPURLResponse {
+extension HTTPURLResponse {
 	
 	/** Format HTTP status and response headers as is customary. */
 	override public var debugDescription: String {

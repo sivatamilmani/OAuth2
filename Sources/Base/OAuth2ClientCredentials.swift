@@ -46,15 +46,15 @@ public class OAuth2ClientCredentials: OAuth2 {
 	
 	- parameter callback: The callback to call after the process has finished
 	*/
-	func obtainAccessToken(params: OAuth2StringDict? = nil, callback: ((params: OAuth2JSON?, error: ErrorType?) -> Void)) {
+	func obtainAccessToken(_ params: OAuth2StringDict? = nil, callback: ((params: OAuth2JSON?, error: ErrorProtocol?) -> Void)) {
 		do {
 			let post = try tokenRequest(params).asURLRequestFor(self)
-			logger?.debug("OAuth2", msg: "Requesting new access token from \(post.URL?.description ?? "nil")")
+			logger?.debug("OAuth2", msg: "Requesting new access token from \(post.url?.description ?? "nil")")
 			
 			performRequest(post) { data, status, error in
 				do {
 					guard let data = data else {
-						throw error ?? OAuth2Error.NoDataInResponse
+						throw error ?? OAuth2Error.noDataInResponse
 					}
 					
 					let params = try self.parseAccessTokenResponse(data)
@@ -74,12 +74,12 @@ public class OAuth2ClientCredentials: OAuth2 {
 	/**
 	Creates a POST request with x-www-form-urlencoded body created from the supplied URL's query part.
 	*/
-	func tokenRequest(params: OAuth2StringDict? = nil) throws -> OAuth2AuthRequest {
+	func tokenRequest(_ params: OAuth2StringDict? = nil) throws -> OAuth2AuthRequest {
 		guard let clientId = clientConfig.clientId where !clientId.isEmpty else {
-			throw OAuth2Error.NoClientId
+			throw OAuth2Error.noClientId
 		}
 		guard nil != clientConfig.clientSecret else {
-			throw OAuth2Error.NoClientSecret
+			throw OAuth2Error.noClientSecret
 		}
 		
 		let req = OAuth2AuthRequest(url: (clientConfig.tokenURL ?? clientConfig.authorizeURL))
