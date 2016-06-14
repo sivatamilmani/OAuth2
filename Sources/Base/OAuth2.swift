@@ -213,9 +213,9 @@ public class OAuth2: OAuth2Base {
 	
 	- parameter params: Optional key/value pairs to pass during authorization and token refresh
 	*/
-	public final func authorize(params: OAuth2StringDict? = nil) {
+	public final func authorize(_ params: OAuth2StringDict? = nil) {
 		isAuthorizing = true
-		tryToObtainAccessTokenIfNeeded(params: params) { success in
+		tryToObtainAccessTokenIfNeeded(params) { success in
 			if success {
 				self.didAuthorize(OAuth2JSON())
 			}
@@ -227,7 +227,7 @@ public class OAuth2: OAuth2Base {
 					else {
 						do {
 							assert(Thread.isMainThread())
-							try self.doAuthorize(params: params)
+							try self.doAuthorize(params)
 						}
 						catch let error {
 							self.didFail(error)
@@ -249,7 +249,7 @@ public class OAuth2: OAuth2Base {
 	public func authorizeEmbeddedFrom(_ context: AnyObject, params: OAuth2StringDict? = nil) {
 		authConfig.authorizeEmbedded = true
 		authConfig.authorizeContext = context
-		authorize(params: params)
+		authorize(params)
 	}
 	
 	/**
@@ -275,13 +275,13 @@ public class OAuth2: OAuth2Base {
 	- parameter params:   Optional key/value pairs to pass during authorization
 	- parameter callback: The callback to call once the client knows whether it has an access token or not
 	*/
-	func tryToObtainAccessTokenIfNeeded(params: OAuth2StringDict? = nil, callback: ((success: Bool) -> Void)) {
+	func tryToObtainAccessTokenIfNeeded(_ params: OAuth2StringDict? = nil, callback: ((success: Bool) -> Void)) {
 		if hasUnexpiredAccessToken() {
 			callback(success: true)
 		}
 		else {
 			logger?.debug("OAuth2", msg: "No access token, maybe I can refresh")
-			doRefreshToken(params: params) { successParams, error in
+			doRefreshToken(params) { successParams, error in
 				if nil != successParams {
 					callback(success: true)
 				}
@@ -303,7 +303,7 @@ public class OAuth2: OAuth2Base {
 	
 	- parameter params: Optional key/value pairs to pass during authorization
 	*/
-	func doAuthorize(params: OAuth2StringDict? = nil) throws {
+	func doAuthorize(_ params: OAuth2StringDict? = nil) throws {
 		if self.authConfig.authorizeEmbedded {
 			try self.authorizeEmbeddedWith(self.authConfig, params: params)
 		}
@@ -389,7 +389,7 @@ public class OAuth2: OAuth2Base {
 	- parameter params: Additional parameters to pass during token refresh
 	- returns:          An `OAuth2AuthRequest` instance that is configured for token refresh
 	*/
-	func tokenRequestForTokenRefresh(params: OAuth2StringDict? = nil) throws -> OAuth2AuthRequest {
+	func tokenRequestForTokenRefresh(_ params: OAuth2StringDict? = nil) throws -> OAuth2AuthRequest {
 		guard let clientId = clientId where !clientId.isEmpty else {
 			throw OAuth2Error.noClientId
 		}
@@ -412,12 +412,12 @@ public class OAuth2: OAuth2Base {
 	- parameter params:   Optional key/value pairs to pass during token refresh
 	- parameter callback: The callback to call after the refresh token exchange has finished
 	*/
-	public func doRefreshToken(params: OAuth2StringDict? = nil, callback: ((successParams: OAuth2JSON?, error: ErrorProtocol?) -> Void)) {
+	public func doRefreshToken(_ params: OAuth2StringDict? = nil, callback: ((successParams: OAuth2JSON?, error: ErrorProtocol?) -> Void)) {
 		do {
-			let post = try tokenRequestForTokenRefresh(params: params).asURLRequestFor(self)
+			let post = try tokenRequestForTokenRefresh(params).asURLRequestFor(self)
 			logger?.debug("OAuth2", msg: "Using refresh token to receive access token from \(post.url?.description ?? "nil")")
 			
-			performRequest(post) { data, status, error in
+			performRequest(post as URLRequest) { data, status, error in
 				do {
 					guard let data = data else {
 						throw error ?? OAuth2Error.noDataInResponse
@@ -534,7 +534,7 @@ public class OAuth2: OAuth2Base {
 	- parameter cachePolicy: The cache policy to use, defaults to `NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData`
 	- returns: OAuth2Request for the given URL
 	*/
-	public func request(forURL url: URL, cachePolicy: NSURLRequest.CachePolicy = .reloadIgnoringLocalCacheData) -> OAuth2Request {
+	public func request(forURL url: URL, cachePolicy: URLRequest.CachePolicy = .reloadIgnoringLocalCacheData) -> OAuth2Request {
 		return OAuth2Request(URL: url, oauth: self, cachePolicy: cachePolicy, timeoutInterval: 20)
 	}
 	

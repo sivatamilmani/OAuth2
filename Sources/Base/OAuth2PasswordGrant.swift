@@ -45,8 +45,8 @@ public class OAuth2PasswordGrant: OAuth2 {
 		super.init(settings: settings)
 	}
 	
-	override func doAuthorize(params: [String : String]? = nil) {
-		self.obtainAccessToken(params: params) { params, error in
+	override func doAuthorize(_ params: [String : String]? = nil) {
+		self.obtainAccessToken(params) { params, error in
 			if let error = error {
 				self.didFail(error)
 			}
@@ -61,12 +61,12 @@ public class OAuth2PasswordGrant: OAuth2 {
 	
 	- parameter callback: The callback to call after the request has returned
 	*/
-	func obtainAccessToken(params: OAuth2StringDict? = nil, callback: ((params: OAuth2JSON?, error: ErrorProtocol?) -> Void)) {
+	func obtainAccessToken(_ params: OAuth2StringDict? = nil, callback: ((params: OAuth2JSON?, error: ErrorProtocol?) -> Void)) {
 		do {
-			let post = try tokenRequest(params: params).asURLRequestFor(self)
+			let post = try tokenRequest(params).asURLRequestFor(self)
 			logger?.debug("OAuth2", msg: "Requesting new access token from \(post.url?.description)")
 			
-			performRequest(post) { data, status, error in
+			performRequest(post as URLRequest) { data, status, error in
 				do {
 					guard let data = data else {
 						throw error ?? OAuth2Error.noDataInResponse
@@ -95,7 +95,7 @@ public class OAuth2PasswordGrant: OAuth2 {
 	/**
 	Creates a POST request with x-www-form-urlencoded body created from the supplied URL's query part.
 	*/
-	func tokenRequest(params: OAuth2StringDict? = nil) throws -> OAuth2AuthRequest {
+	func tokenRequest(_ params: OAuth2StringDict? = nil) throws -> OAuth2AuthRequest {
 		if username.isEmpty{
 			throw OAuth2Error.noUsername
 		}
